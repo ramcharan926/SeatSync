@@ -2,7 +2,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000";
+
+const API_URL = "https://seatsync-zi33.onrender.com";
+
 
 function ManagerLogin() {
   const [email, setEmail] = useState("");
