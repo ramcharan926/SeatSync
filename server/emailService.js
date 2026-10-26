@@ -87,5 +87,20 @@ Thank you for booking with SeatSync!
   console.log("Booking email sent:", data?.id);
   return data;
 }
+async function testEmail() {
+  const { data, error } = await resend.emails.send({
+    from: "SeatSync <onboarding@resend.dev>",
+    to: ["YOUR_VERIFIED_EMAIL@example.com"],
+    subject: "SeatSync email test",
+    text: "Bro, your SeatSync email service is working!",
+  });
 
-module.exports = sendBookingEmail;
+  if (error) {
+    throw new Error(error.message || "Resend email test failed");
+  }
+
+  console.log("Test email sent:", data?.id);
+  return data;
+}
+
+module.exports = { sendBookingEmail, testEmail };
