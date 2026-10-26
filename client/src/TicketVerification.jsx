@@ -45,30 +45,30 @@ function TicketVerification() {
     }
 
     // Read the organizer key saved by OrganizerDashboard
-    const savedKey = sessionStorage.getItem("organizerApiKey");
+   const token = sessionStorage.getItem("managerToken");
 
-    if (!savedKey) {
-      setResult({
-        valid: false,
-        message: "Please enter your organizer API key in the dashboard first.",
-      });
-      return;
-    }
+if (!token) {
+  setResult({
+    valid: false,
+    message: "Please log in as a manager first.",
+  });
+  return;
+}
 
     setLoading(true);
     setResult(null);
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/tickets/${encodeURIComponent(
-          ticketId.trim()
-        )}`,
+       `https://seatsync-zi33.onrender.com/api/tickets/${encodeURIComponent(
+  ticketId.trim()
+)}`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "x-organizer-key": savedKey,
-          },
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${token}`,
+},
         }
       );
 

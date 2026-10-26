@@ -737,7 +737,7 @@ console.log(
 // Verify and check in a ticket
 app.post(
   "/api/tickets/:ticketId",
-  requireOrganizer,
+   requireManager,
   async (req, res) => {
     try {
       const { ticketId } = req.params;
