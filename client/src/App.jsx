@@ -32,7 +32,7 @@ const [lockExpiresAt, setLockExpiresAt] = useState(null);
 const [remainingSeconds, setRemainingSeconds] = useState(0);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/events")
+   fetch("https://seatsync-zi33.onrender.com/api/events")
       .then((res) => {
         if (!res.ok) throw new Error("Could not load events");
         return res.json();
@@ -60,7 +60,7 @@ useEffect(() => {
       setBookingError("Seat lock expired. Please select seats again.");
 
       if (selectedEvent) {
-        fetch(`http://localhost:5000/api/seat-locks/${selectedEvent._id}`)
+        fetch(`https://seatsync-zi33.onrender.com/api/seat-locks/${selectedEvent._id}`)
           .then((response) => response.json())
           .then(setSeatStatuses)
           .catch(() => {});
@@ -110,7 +110,7 @@ async function openBooking(event) {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/seat-locks/${event._id}`
+      `https://seatsync-zi33.onrender.com/api/seat-locks/${event._id}`
     );
     const data = await response.json();
 
@@ -157,7 +157,7 @@ async function lockSelectedSeats() {
   setBookingLoading(true);
 
   try {
-    const response = await fetch("http://localhost:5000/api/seat-locks", {
+    const response = await fetch("https://seatsync-zi33.onrender.com/api/seat-locks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       
@@ -185,7 +185,7 @@ body: JSON.stringify({
     setBookingError(error.message || "Could not lock seats.");
 
     const response = await fetch(
-      `http://localhost:5000/api/seat-locks/${selectedEvent._id}`
+      `https://seatsync-zi33.onrender.com/api/seat-locks/${selectedEvent._id}`
     );
     if (response.ok) setSeatStatuses(await response.json());
   } finally {
@@ -208,7 +208,7 @@ body: JSON.stringify({
     setBookingLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/bookings", {
+      const response = await fetch("https://seatsync-zi33.onrender.com/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
        

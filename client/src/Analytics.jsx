@@ -13,7 +13,7 @@ import {
   Cell,
 } from "recharts";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://seatsync-zi33.onrender.com";
 
 const chartColors = [
   "#8b7cff",
