@@ -90,7 +90,7 @@ Thank you for booking with SeatSync!
 async function testEmail() {
   const { data, error } = await resend.emails.send({
     from: "SeatSync <onboarding@resend.dev>",
-    to: ["YOUR_VERIFIED_EMAIL@example.com"],
+    to: ["kramcharanteja269@gmail.com"],
     subject: "SeatSync email test",
     text: "Bro, your SeatSync email service is working!",
   });
