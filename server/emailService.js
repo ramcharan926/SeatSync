@@ -3,11 +3,16 @@ const nodemailer = require("nodemailer");
 const QRCode = require("qrcode");
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_APP_PASSWORD,
   },
+  connectionTimeout: 20000,
+  greetingTimeout: 20000,
+  socketTimeout: 30000,
 });
 
 async function sendBookingEmail(booking, event) {
@@ -94,4 +99,9 @@ Thank you for booking with SeatSync!
   return info;
 }
 
-module.exports = sendBookingEmail;
+async function testEmail() {
+  await transporter.verify();
+  console.log("SMTP connection successful!");
+}
+
+module.exports = { sendBookingEmail, testEmail };

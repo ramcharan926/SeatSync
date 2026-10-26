@@ -15,13 +15,31 @@ console.log("ANALYTICS ROUTE VERSION LOADED");
 
 const Event = require("./models/Event");
 const Booking = require("./models/Booking");
-const sendBookingEmail = require("./emailService");
+const { sendBookingEmail, testEmail } = require("./emailService");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.json());
 
+app.get("/api/test-email", async (req, res) => {
+  try {
+    await testEmail();
+
+    res.json({
+      success: true,
+      message: "SMTP connection successful!",
+    });
+  } catch (error) {
+    console.error("SMTP test failed:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.code || error.message,
+    });
+  }
+});
 // Organizer API-key middleware
 function requireOrganizer(req, res, next) {
   const apiKey = req.headers["x-organizer-key"];
