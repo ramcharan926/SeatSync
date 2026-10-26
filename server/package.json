@@ -19,6 +19,7 @@
     "mongoose": "^9.11.4",
     "nodemailer": "^10.2.1",
     "qrcode": "^1.5.4",
+    "resend": "^6.34.1",
     "uuid": "^14.0.3"
   },
   "devDependencies": {

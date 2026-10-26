@@ -1,23 +1,12 @@
 
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 const QRCode = require("qrcode");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_APP_PASSWORD,
-  },
-  connectionTimeout: 20000,
-  greetingTimeout: 20000,
-  socketTimeout: 30000,
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendBookingEmail(booking, event) {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
-    throw new Error("Email credentials are missing from .env");
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is missing");
   }
 
   const eventDate = new Date(event.date).toLocaleString("en-IN", {
@@ -37,29 +26,27 @@ async function sendBookingEmail(booking, event) {
       margin: 2,
     });
 
-    const cid = `ticket-${ticket.ticketId}`;
-
     attachments.push({
       filename: `SeatSync-${ticket.seatNumber}.png`,
-      content: qrBuffer,
+      content: qrBuffer.toString("base64"),
       contentType: "image/png",
-      cid,
+      contentId: `ticket-${ticket.ticketId}`,
     });
 
     ticketHtml += `
       <h3>Seat ${ticket.seatNumber}</h3>
       <p>Ticket ID: ${ticket.ticketId}</p>
-      <img src="cid:${cid}" width="250" alt="Ticket QR code" />
+      <img src="cid:ticket-${ticket.ticketId}" width="250" alt="Ticket QR code" />
     `;
 
     ticketText += `Seat: ${ticket.seatNumber}, Ticket ID: ${ticket.ticketId}\n`;
   }
 
-  const info = await transporter.sendMail({
-    from: `"SeatSync" <${process.env.EMAIL_USER}>`,
-    to: booking.email,
+  const { data, error } = await resend.emails.send({
+    // Replace this with a sender address authorized by Resend.
+    from: "SeatSync <onboarding@resend.dev>",
+    to: [booking.email],
     subject: `Your SeatSync tickets - ${event.title}`,
-
     text: `
 Hi ${booking.customerName},
 
@@ -77,7 +64,6 @@ ${ticketText}
 
 Thank you for booking with SeatSync!
 `,
-
     html: `
       <h2>Your SeatSync booking is confirmed!</h2>
       <p>Hi ${booking.customerName},</p>
@@ -91,17 +77,15 @@ Thank you for booking with SeatSync!
       ${ticketHtml}
       <p>Thank you for booking with SeatSync!</p>
     `,
-
     attachments,
   });
 
-  console.log("Booking email sent:", info.messageId);
-  return info;
+  if (error) {
+    throw new Error(error.message || "Resend failed to send the email");
+  }
+
+  console.log("Booking email sent:", data?.id);
+  return data;
 }
 
-async function testEmail() {
-  await transporter.verify();
-  console.log("SMTP connection successful!");
-}
-
-module.exports = { sendBookingEmail, testEmail };
+module.exports = sendBookingEmail;
